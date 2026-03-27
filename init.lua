@@ -604,7 +604,23 @@ require('lazy').setup({
       ---@type table<string, vim.lsp.Config>
       local servers = {
         -- clangd = {},
-        -- gopls = {},
+        gopls = {
+          gofumpt = true,
+        },
+        golangci_lint_ls = {
+          cmd = { 'golangci-lint-langserver' },
+          root_markers = { '.git', 'go.mod' },
+          init_options = {
+            command = {
+              'golangci-lint',
+              'run',
+              '--output.json.path',
+              'stdout',
+              '--show-stats=false',
+              '--issues-exit-code=1',
+            },
+          },
+        },
         -- pyright = {},
         -- rust_analyzer = {},
         --
@@ -699,6 +715,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        go = { 'gofumpt' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -877,7 +894,7 @@ require('lazy').setup({
     branch = 'main',
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
     config = function()
-      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      local parsers = { 'bash', 'c', 'diff', 'go', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
       require('nvim-treesitter').install(parsers)
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(args)
@@ -901,6 +918,50 @@ require('lazy').setup({
         end,
       })
     end,
+  },
+
+  {
+    'kdheepak/lazygit.nvim',
+    lazy = true,
+    cmd = {
+      'LazyGit',
+      'LazyGitConfig',
+      'LazyGitCurrentFile',
+      'LazyGitFilter',
+      'LazyGitFilterCurrentFile',
+    },
+    -- optional for floating window border decoration
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+    -- setting the keybinding for LazyGit with 'keys' is recommended in
+    -- order to load the plugin when the command is run for the first time
+    keys = {
+      { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
+    },
+  },
+
+  {
+    'rmagatti/auto-session',
+    lazy = false,
+    ---enables autocomplete for opts
+    ---@module "auto-session"
+    ---@type AutoSession.Config
+    opts = {
+      suppressed_dirs = { '~/' },
+      -- log_level = 'debug',
+    },
+  },
+
+  {
+    'ldelossa/gh.nvim',
+    dependencies = {
+      {
+        'ldelossa/litee.nvim',
+        config = function() require('litee.lib').setup() end,
+      },
+    },
+    config = function() require('litee.gh').setup() end,
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
