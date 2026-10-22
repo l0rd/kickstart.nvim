@@ -28,10 +28,14 @@ vim.keymap.set('n', '<F7>', function() require('dapui').toggle() end, { desc = '
 local dap = require 'dap'
 local dapui = require 'dapui'
 
+-- Mason can't build delve on Windows ARM64 (it needs `-tags exp.winarm64`), so there we use a
+-- manually installed one: go install -tags exp.winarm64 github.com/go-delve/delve/cmd/dlv@latest
+local manual_delve = vim.fn.has 'win32' == 1 and jit.arch == 'arm64'
+
 require('mason-nvim-dap').setup {
   -- Makes a best effort to setup the various debuggers with
   -- reasonable debug configurations
-  automatic_installation = true,
+  automatic_installation = not manual_delve,
 
   -- You can provide additional configuration to the handlers,
   -- see mason-nvim-dap README for more information
@@ -39,7 +43,7 @@ require('mason-nvim-dap').setup {
 
   -- You'll need to check that you have the required things installed
   -- online, please don't ask me how to install them :)
-  ensure_installed = {
+  ensure_installed = manual_delve and {} or {
     -- Update this to ensure that you have the debuggers for the langs you want
     'delve',
   },

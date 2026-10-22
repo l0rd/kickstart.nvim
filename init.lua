@@ -460,6 +460,9 @@ do
       theme('Rosé Pine dawn', 'rose-pine-dawn', 'light'),
     },
     livePreview = true,
+    -- Workaround: on recent Neovim, Themery wrongly warns that this deprecated option is set
+    -- unless its (absolute) path contains 'v:null'. The option itself is unused.
+    themeConfigFile = vim.fn.stdpath 'state' .. '/themery/v:null',
   }
   vim.keymap.set('n', '<leader>tc', '<cmd>Themery<cr>', { desc = '[T]heme / [C]olorscheme picker' })
 
@@ -1079,7 +1082,7 @@ do
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug'
+  require 'kickstart.plugins.debug'
   -- require 'kickstart.plugins.indent_line'
   -- require 'kickstart.plugins.lint'
   -- require 'kickstart.plugins.autopairs'
