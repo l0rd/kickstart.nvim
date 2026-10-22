@@ -441,9 +441,7 @@ do
   vim.cmd.colorscheme 'gruvbox'
 
   -- Loading Themery re-applies the last theme you picked (if any)
-  local function theme(name, colorscheme, background)
-    return { name = name, colorscheme = colorscheme, before = ('vim.o.background = %q'):format(background) }
-  end
+  local function theme(name, colorscheme, background) return { name = name, colorscheme = colorscheme, before = ('vim.o.background = %q'):format(background) } end
   require('themery').setup {
     themes = {
       theme('Gruvbox light', 'gruvbox', 'light'),
@@ -872,7 +870,23 @@ do
   --    :Mason
   --
   -- You can press `g?` for help in this menu.
-  local ensure_installed = vim.tbl_keys(servers or {})
+  --
+  -- Mason only has x64 Windows builds of stylua and lua-language-server, so on Windows ARM64
+  -- use native builds installed outside Mason instead:
+  --   stylua:              cargo install stylua
+  --   lua-language-server: built from source in ~/git/lua-language-server
+  local native_tools = {}
+  if vim.fn.has 'win32' == 1 and jit.arch == 'arm64' then
+    native_tools = {
+      stylua = { vim.fn.expand '~/.cargo/bin/stylua.exe', '--lsp' },
+      lua_ls = { vim.fn.expand '~/git/lua-language-server/bin/lua-language-server.exe' },
+    }
+  end
+  for name, cmd in pairs(native_tools) do
+    servers[name].cmd = cmd
+  end
+
+  local ensure_installed = vim.tbl_filter(function(name) return not native_tools[name] end, vim.tbl_keys(servers))
   vim.list_extend(ensure_installed, {
     -- You can add other tools here that you want Mason to install
   })
