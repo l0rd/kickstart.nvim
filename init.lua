@@ -423,9 +423,45 @@ do
   -- change the command under that to load whatever the name of that colorscheme is.
   --
   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  vim.pack.add { gh 'ellisonleao/gruvbox.nvim' }
+  --
+  -- Colorschemes are installed here and switched with Themery (`:Themery` or `<leader>tc`),
+  -- which shows a live preview and remembers your choice across restarts.
+  -- To add a theme: add its repo to `vim.pack.add` and an entry to `themes` below.
+  vim.pack.add {
+    gh 'ellisonleao/gruvbox.nvim',
+    gh 'folke/tokyonight.nvim',
+    { src = gh 'catppuccin/nvim', name = 'catppuccin' },
+    gh 'rebelot/kanagawa.nvim',
+    { src = gh 'rose-pine/neovim', name = 'rose-pine' },
+    gh 'zaldih/themery.nvim',
+  }
+
+  -- Default theme, used until you pick one with Themery
   vim.o.background = 'light'
   vim.cmd.colorscheme 'gruvbox'
+
+  -- Loading Themery re-applies the last theme you picked (if any)
+  local function theme(name, colorscheme, background)
+    return { name = name, colorscheme = colorscheme, before = ('vim.o.background = %q'):format(background) }
+  end
+  require('themery').setup {
+    themes = {
+      theme('Gruvbox light', 'gruvbox', 'light'),
+      theme('Gruvbox dark', 'gruvbox', 'dark'),
+      theme('Tokyo Night', 'tokyonight-night', 'dark'),
+      theme('Tokyo Night storm', 'tokyonight-storm', 'dark'),
+      theme('Tokyo Night day', 'tokyonight-day', 'light'),
+      theme('Catppuccin latte', 'catppuccin-latte', 'light'),
+      theme('Catppuccin mocha', 'catppuccin-mocha', 'dark'),
+      theme('Kanagawa wave', 'kanagawa-wave', 'dark'),
+      theme('Kanagawa dragon', 'kanagawa-dragon', 'dark'),
+      theme('Kanagawa lotus', 'kanagawa-lotus', 'light'),
+      theme('Rosé Pine', 'rose-pine-main', 'dark'),
+      theme('Rosé Pine dawn', 'rose-pine-dawn', 'light'),
+    },
+    livePreview = true,
+  }
+  vim.keymap.set('n', '<leader>tc', '<cmd>Themery<cr>', { desc = '[T]heme / [C]olorscheme picker' })
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
