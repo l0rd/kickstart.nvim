@@ -26,6 +26,10 @@
       "rev": "9e0201673e08e997e7cf52afca5565c70bd117f3",
       "src": "https://github.com/j-hui/fidget.nvim"
     },
+    "friendly-snippets": {
+      "rev": "b4d01b0fdf3c9a549961c2f9ffe8dc09be166219",
+      "src": "https://github.com/rafamadriz/friendly-snippets"
+    },
     "gh.nvim": {
       "rev": "6f367b2ab8f9d4a0a23df2b703a3f91137618387",
       "src": "https://github.com/ldelossa/gh.nvim"
