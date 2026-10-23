@@ -16,6 +16,15 @@ if not ok then return end
 -- VS Code accepts trailing commas in launch.json, nvim-dap's JSON parser doesn't: strip them.
 require('dap.ext.vscode').json_decode = function(str, opts) return vim.json.decode((str:gsub(',(%s*[%]}])', '%1')), opts) end
 
+-- Show the program's stdout/stderr in the debugger (dap-ui REPL). Delve's default ('local')
+-- writes it to its own console, which Neovim never displays.
+dap.listeners.on_config['go-output-remote'] = function(config)
+  if config.type ~= 'go' or config.outputMode then return config end
+  config = vim.deepcopy(config)
+  config.outputMode = 'remote'
+  return config
+end
+
 local function default_binary()
   local candidate = vim.fs.joinpath(vim.fn.getcwd(), 'bin', 'windows', 'podman-debug.exe')
   if vim.uv.fs_stat(candidate) then return candidate end
